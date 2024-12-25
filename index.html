@@ -11,9 +11,9 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center; /* Align items to the top */
             height: 100vh;
-            background-image: url('imgs/cute_background.jpg'); /* Replace with your image path */
+            background-image: url('imgs/cute_background.jpeg'); /* Replace with your image path */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -24,10 +24,11 @@
             text-align: center;
             max-width: 900px;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.9); /* Slight transparency */
-            border-radius: 20px; /* Smoother corners */
-            border: 5px solid #FFD700; /* Gold border */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            border: 5px solid #FFD700;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            margin-right: 20px; /* Space between the container and the table */
         }
         .question {
             margin-top: 20px;
@@ -122,6 +123,30 @@
             font-weight: bold;
         }
 
+        #full-results {
+            display: none;
+            max-width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            height: fit-content;
+        }
+        #full-results th, #full-results td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        #full-results th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        #full-results h2 {
+            margin-top: 0;
+        }
+
         .snowflake {
             position: absolute;
             top: 0;
@@ -172,6 +197,21 @@
                 <!-- Platzhalter für die Treppchen -->
             </div>
         </div>    
+    </div>
+
+    <div id="full-results">
+        <h2>Komplette Ergebnisse</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Urlaubsziel</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="results-table-body">
+                <!-- Dynamically filled -->
+            </tbody>
+        </table>
     </div>
 
     <script>
@@ -287,31 +327,28 @@
             currentQuestion++;
             loadQuestion(currentQuestion);
         }
+        // Other existing script functions remain unchanged
         function showResult() {
             document.getElementById('questions').classList.add('hidden');
             document.getElementById('result').classList.remove('hidden');
 
-            // Sortiere die Urlaubsziele nach Punkten (absteigend)
             const sortedVacations = vacations
                 .map((vacation, index) => ({ ...vacation, index }))
                 .sort((a, b) => b.score - a.score);
 
-            // Nimm die Top 3
             const top3 = sortedVacations.slice(0, 3);
 
-            // Fülle die Podiums-HTML
             const podiumContainer = document.getElementById('podium');
             podiumContainer.innerHTML = top3
                 .map((vacation, rank) => {
-                    // CSS-Klasse für die Ranghöhe
                     const podiumClass = rank === 0 ? "gold" : rank === 1 ? "silver" : "bronze";
                     return `
                         <div style="text-align: center;">
                             <div style="
-                                height: ${vacation.score * 15}px; /* Taller podium bar */
-                                width: 150px; /* Wider podium bar */
+                                height: ${vacation.score * 15}px;
+                                width: 150px;
                                 background: ${rank === 0 ? '#FFD700' : rank === 1 ? '#C0C0C0' : '#CD7F32'};
-                                border-radius: 15px; /* Smooth edges for podium bars */
+                                border-radius: 15px;
                                 display: flex; 
                                 justify-content: center; 
                                 align-items: flex-end; 
@@ -327,37 +364,19 @@
                 })
                 .join('');
 
-            // Add button for full results
-            const resultContainer = document.getElementById('result');
-            const fullResultsButton = document.createElement('button');
-            fullResultsButton.className = 'button';
-            fullResultsButton.textContent = "Komplette Ergebnisse";
-            fullResultsButton.onclick = toggleFullResults;
-            resultContainer.appendChild(fullResultsButton);
+            // Populate full results table
+            const resultsTableBody = document.getElementById('results-table-body');
+            resultsTableBody.innerHTML = sortedVacations
+                .map(vacation => `
+                    <tr>
+                        <td>${vacation.name}</td>
+                        <td>${vacation.score}</td>
+                    </tr>
+                `).join('');
 
-            // Generate the full results table
-            const tableHTML = `
-                <table id="full-results">
-                    <thead>
-                        <tr>
-                            <th>Urlaubsziel</th>
-                            <th>Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${sortedVacations
-                            .map(vacation => `
-                                <tr>
-                                    <td>${vacation.name}</td>
-                                    <td>${vacation.score}</td>
-                                </tr>
-                            `).join('')}
-                    </tbody>
-                </table>
-            `;
-            resultContainer.insertAdjacentHTML('beforeend', tableHTML);
+            // Display full results table by default
+            document.getElementById('full-results').style.display = 'block';
         }
-
         function toggleFullResults() {
             const fullResultsTable = document.getElementById('full-results');
             fullResultsTable.style.display = fullResultsTable.style.display === 'none' || !fullResultsTable.style.display ? 'block' : 'none';
