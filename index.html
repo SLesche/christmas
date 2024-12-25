@@ -95,6 +95,22 @@
             font-weight: bold;
         }
 
+        .snowflake {
+            position: absolute;
+            top: 0;
+            font-size: 20px;
+            color: white;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(90vh);
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -319,6 +335,23 @@
             const fullResultsTable = document.getElementById('full-results');
             fullResultsTable.style.display = fullResultsTable.style.display === 'none' || !fullResultsTable.style.display ? 'block' : 'none';
         }
+
+        // Snowfall Effect
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.textContent = '❄️';
+            snowflake.className = 'snowflake';
+            snowflake.style.left = `${Math.random() * 70 + 15}vw`;
+            snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`; // Random fall speed
+            snowflake.style.opacity = Math.random();
+            document.body.appendChild(snowflake);
+
+            setTimeout(() => {
+                snowflake.remove();
+            }, 5000); // Remove after falling
+        }
+
+        setInterval(createSnowflake, 300); // Generate snowflakes every 300ms
 
     </script>
 </body>
