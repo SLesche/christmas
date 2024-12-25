@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wähle Deinen Urlaub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f9fc;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .question {
+            margin-top: 20px;
+        }
+        .images {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .images img {
+            width: 45%;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .images img:hover {
+            transform: scale(1.05);
+        }
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main">
+        <!-- Einleitungsseite -->
+        <div id="intro">
+            <h1>Hey Honey, willkommen zu deinem Weihnachtsgeschenk</h1>
+            <p>
+                Nachdem die letzten Urlaube etwas stressig, kurz und erkältet waren, möchte ich dir ein entspanntes Urlaubswochenende schenken.
+            </p>
+            <p>
+                Mir sind sogar ein paar verschiedene Ziele eingefallen, zwischen denen ich nicht so einfach auswählen konnte.
+            </p>
+            <p>
+                Daher dachte ich mir, kombiniere ich doch meine Fähigkeiten als Psychologe und IT-Mensch und mache das was ich am besten kann: Fragebögen programmieren!
+            </p>
+            <p>
+                Hier in diesem, super gut validierten und total durchdacht programmiertem Fragebogen wird also dein <b>perfektes</b> Urlaubsziel entdeckt! Dafür musst du nur ein paar Fragen beantworten :)
+            </p>
+            <button class="button" onclick="showNext()">Start</button>
+        </div>
+
+        <!-- Fragenbereich -->
+        <div id="questions" class="hidden">
+            <!-- Fragen werden hier dynamisch eingefügt -->
+        </div>
+
+        <!-- Ergebnisanzeige -->
+        <div id="result" class="hidden">
+            <h2>Dein wissenschaftlich perfektes Urlaubsziel:</h2>
+            <div id="podium" style="display: flex; justify-content: center; align-items: flex-end; gap: 20px;">
+                <!-- Platzhalter für die Treppchen -->
+            </div>
+        </div>    
+    </div>
+
+    <script>
+        // Urlaubsoptionen und Punkte-Logik
+        const vacations = [
+            { name: "Paris", score: 0, img: "imgs/paris.jpg" },
+            { name: "Colmar", score: 0, img: "imgs/colmar.jpg"},
+            { name: "Luxemburg", score: 0, img: "imgs/luxemburg.jpg" },
+            { name: "Straßburg", score: 0, img: "imgs/strasburg.jpg" },
+            { name: "Tübingen", score: 0, img: "imgs/tubingen.jpg" },
+            { name: "Oberstdorf", score: 0, img: "imgs/oberstdorf.jpg" },
+            { name: "Brüssel", score: 0, img: "imgs/brussel.jpg" },
+            { name: "Odenwald", score: 0, img: "imgs/odenwald.jpg" },
+            { name: "Schwarzwald", score: 0, img: "imgs/schwarzwald.jpg" },
+            { name: "Bodensee", score: 0, img: "imgs/bodensee.jpg" },
+            { name: "Pfälzer Wald", score: 0, img: "imgs/pfalz.jpg" }
+        ];
+
+        // Fragen und Antworten mit Punktzuweisung
+        const questions = [
+            {
+                text: "Auf welche Art Landschaft hast du am meisten Lust?",
+                options: [
+                    { label: "Romantische Stadtansichten", image: "imgs/romantic_town.jpg", scores: [5, 3, 4, 5, 4, 1, 4, 0, 2, 3, 2] },
+                    { label: "Berge und Wandern", image: "imgs/mountain_views.jpg", scores:          [0, 0, 0, 0, 3, 5, 0, 4, 3, 4, 3] },
+                    { label: "Weinberge und Natur", image: "imgs/weinberge.jpg", scores:        [0, 5, 0, 4, 4, 3, 0, 4, 4, 4, 4] }
+                ]
+            },
+            {
+                text: "In welche Himmelsrichtung möchtest Du reisen?",
+                options: [
+                    { label: "Norden", image: "imgs/north.png", scores: [0, 0, 5, 0, 0, 0, 5, 2, 0, 0, 0] },
+                    { label: "Süden", image: "imgs/south.png", scores:  [3, 5, 0, 2, 5, 5, 0, 2, 5, 5, 4] },
+                    { label: "Westen", image: "imgs/west.png", scores:  [5, 2, 3, 3, 0, 0, 3, 0, 0, 0, 4] }
+                ]
+            },
+            {
+                text: "Wie groß sollte die Stadt sein?",
+                options: [
+                    { label: "Klein und gemütlich", image: "imgs/smallcity.jpg", scores:      [0, 5, 0, 0, 2, 5, 0, 5, 5, 5, 5] },
+                    { label: "Mittelgroß und lebendig", image: "imgs/mediumcity.jpg", scores: [0, 0, 4, 5, 4, 0, 0, 0, 0, 0, 0] },
+                    { label: "Großstadt-Flair", image: "imgs/largecity.jpg", scores:            [5, 0, 3, 0, 0, 0, 5, 0, 0, 0, 0] }
+                ]
+            },
+            {
+                text: "Welches Essen sollte das Urlaubsziel am besten haben?",
+                options: [
+                    { label: "französische Küche", image: "imgs/frenchfood.jpg", scores: [5, 5, 3, 5, 0, 0, 3, 0, 0, 0, 0] },
+                    { label: "deutsche Küche", image: "imgs/germanfood.jpg", scores:     [0, 0, 0, 0, 5, 4, 0, 5, 5, 5, 5] },
+                    { label: "vielseitig", image: "imgs/europeanfood.jpg", scores:       [3, 0, 5, 2, 0, 0, 5, 0, 0, 0, 0] }
+                ]
+            },
+            {
+                text: "Was würdest du am liebsten im Urlaub tun?",
+                options: [
+                    { label: "Sehenswürdigkeiten anschauen", image: "imgs/sightseeing.jpg", scores: [5, 3, 4, 3, 2, 1, 5, 0, 0, 2, 0] },
+                    { label: "Museen besuchen", image: "imgs/museum.jpg", scores:              [5, 4, 3, 5, 2, 1, 5, 0, 0, 2, 0] },
+                    { label: "Spaziergänge in der Natur", image: "imgs/walksnature.jpg", scores:    [0, 2, 2, 0, 4, 5, 0, 5, 5, 4, 5] },
+                    { label: "Charmante Dörfer erkunden", image: "imgs/smallvillage.jpg", scores:   [0, 5, 0, 5, 5, 4, 0, 5, 5, 4, 5] }
+                ]
+            },
+            {
+                text: "Wie weit darf das Ziel entfernt sein?",
+                options: [
+                    { label: "Weniger als 2 Stunden", image: "imgs/nearby.jpg", scores: [0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 5] },
+                    { label: "2-4 Stunden", image: "imgs/midrange.jpg", scores:         [0, 5, 5, 0, 5, 0, 0, 0, 5, 5, 0] },
+                    { label: "Mehr als 4 Stunden", image: "imgs/faraway.jpg", scores:   [5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0] }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        function showNext() {
+            document.getElementById('intro').classList.add('hidden');
+            document.getElementById('questions').classList.remove('hidden');
+            loadQuestion(currentQuestion);
+        }
+
+        function loadQuestion(index) {
+            const questionContainer = document.getElementById('questions');
+            questionContainer.innerHTML = ''; // Vorherige Frage löschen
+
+            if (index >= questions.length) {
+                showResult();
+                return;
+            }
+
+            const question = questions[index];
+            const questionHTML = `
+                <div class="question">
+                    <h2>${question.text}</h2>
+                    <div class="images">
+                        ${question.options.map((option, i) => `
+                            <div>
+                                <img src="${option.image}" alt="${option.label}" onclick="selectOption(${index}, ${i})">
+                                <p>${option.label}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            questionContainer.innerHTML = questionHTML;
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            const selectedOption = questions[questionIndex].options[optionIndex];
+            // Punkte zu den jeweiligen Urlaubszielen hinzufügen
+            selectedOption.scores.forEach((score, i) => {
+                vacations[i].score += score;
+            });
+
+            currentQuestion++;
+            loadQuestion(currentQuestion);
+        }
+
+        function showResult() {
+            document.getElementById('questions').classList.add('hidden');
+            document.getElementById('result').classList.remove('hidden');
+
+            // Sortiere die Urlaubsziele nach Punkten (absteigend)
+            const sortedVacations = vacations
+                .map((vacation, index) => ({ ...vacation, index }))
+                .sort((a, b) => b.score - a.score);
+
+            // Nimm die Top 3
+            const top3 = sortedVacations.slice(0, 3);
+
+            // Fülle die Podiums-HTML
+            const podiumContainer = document.getElementById('podium');
+            podiumContainer.innerHTML = top3
+                .map((vacation, rank) => {
+                    // CSS-Klasse für die Ranghöhe
+                    const podiumClass = rank === 0 ? "gold" : rank === 1 ? "silver" : "bronze";
+                    return `
+                        <div style="text-align: center;">
+                            <div style="
+                                height: ${150 - rank * 30}px; 
+                                width: 100px; 
+                                background: ${rank === 0 ? '#FFD700' : rank === 1 ? '#C0C0C0' : '#CD7F32'};
+                                border-radius: 10px;
+                                display: flex; 
+                                justify-content: center; 
+                                align-items: flex-end; 
+                                padding: 10px;">
+                                <img src="${vacation.img}" 
+                                    alt="${vacation.name}" 
+                                    style="width: 80%; border-radius: 5px;">
+                            </div>
+                            <h3>${vacation.name}</h3>
+                            <p>${vacation.score} Punkte</p>
+                        </div>
+                    `;
+                })
+                .join('');
+        }
+    </script>
+</body>
+</html>
