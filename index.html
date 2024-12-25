@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wähle Deinen Urlaub</title>
+    <title>Urlaubs-Fragebogen</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,7 +17,7 @@
         }
         .container {
             text-align: center;
-            max-width: 600px;
+            max-width: 1200px;
             padding: 20px;
             background: white;
             border-radius: 10px;
@@ -34,11 +34,13 @@
             margin-top: 20px;
         }
         .images img {
-            width: 45%;
+            max-width: 300px; /* Adjust this value to set the desired maximum width */
+            height: auto; /* Ensures aspect ratio is maintained */
             border-radius: 10px;
             cursor: pointer;
             transition: transform 0.2s;
         }
+
         .images img:hover {
             transform: scale(1.05);
         }
@@ -59,6 +61,40 @@
         .hidden {
             display: none;
         }
+
+        #podium div {
+            text-align: center;
+        }
+        #podium div div {
+            width: 150px; /* Wider podium bar */
+            height: auto; /* Bar height scales based on score */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 10px;
+            border-radius: 15px; /* Rounded corners for podium bars */
+        }
+        #podium img {
+            width: 100%; /* Larger image inside the podium */
+            border-radius: 10px; /* Smooth edges */
+        }
+
+        #full-results {
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #full-results th, #full-results td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        #full-results th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
@@ -73,7 +109,7 @@
                 Mir sind sogar ein paar verschiedene Ziele eingefallen, zwischen denen ich nicht so einfach auswählen konnte.
             </p>
             <p>
-                Daher dachte ich mir, kombiniere ich doch meine Fähigkeiten als Psychologe und IT-Mensch und mache das was ich am besten kann: Fragebögen programmieren!
+                Daher dachte ich mir, kombiniere ich doch meine Fähigkeiten als Psychologe und IT-Mensch und mache das, was ich am besten kann: Fragebögen programmieren!
             </p>
             <p>
                 Hier in diesem, super gut validierten und total durchdacht programmiertem Fragebogen wird also dein <b>perfektes</b> Urlaubsziel entdeckt! Dafür musst du nur ein paar Fragen beantworten :)
@@ -208,7 +244,6 @@
             currentQuestion++;
             loadQuestion(currentQuestion);
         }
-
         function showResult() {
             document.getElementById('questions').classList.add('hidden');
             document.getElementById('result').classList.remove('hidden');
@@ -230,17 +265,17 @@
                     return `
                         <div style="text-align: center;">
                             <div style="
-                                height: ${150 - rank * 30}px; 
-                                width: 100px; 
+                                height: ${vacation.score * 15}px; /* Taller podium bar */
+                                width: 150px; /* Wider podium bar */
                                 background: ${rank === 0 ? '#FFD700' : rank === 1 ? '#C0C0C0' : '#CD7F32'};
-                                border-radius: 10px;
+                                border-radius: 15px; /* Smooth edges for podium bars */
                                 display: flex; 
                                 justify-content: center; 
                                 align-items: flex-end; 
                                 padding: 10px;">
                                 <img src="${vacation.img}" 
                                     alt="${vacation.name}" 
-                                    style="width: 80%; border-radius: 5px;">
+                                    style="width: 90%; border-radius: 10px;">
                             </div>
                             <h3>${vacation.name}</h3>
                             <p>${vacation.score} Punkte</p>
@@ -248,7 +283,43 @@
                     `;
                 })
                 .join('');
+
+            // Add button for full results
+            const resultContainer = document.getElementById('result');
+            const fullResultsButton = document.createElement('button');
+            fullResultsButton.className = 'button';
+            fullResultsButton.textContent = "Komplette Ergebnisse";
+            fullResultsButton.onclick = toggleFullResults;
+            resultContainer.appendChild(fullResultsButton);
+
+            // Generate the full results table
+            const tableHTML = `
+                <table id="full-results">
+                    <thead>
+                        <tr>
+                            <th>Urlaubsziel</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sortedVacations
+                            .map(vacation => `
+                                <tr>
+                                    <td>${vacation.name}</td>
+                                    <td>${vacation.score}</td>
+                                </tr>
+                            `).join('')}
+                    </tbody>
+                </table>
+            `;
+            resultContainer.insertAdjacentHTML('beforeend', tableHTML);
         }
+
+        function toggleFullResults() {
+            const fullResultsTable = document.getElementById('full-results');
+            fullResultsTable.style.display = fullResultsTable.style.display === 'none' || !fullResultsTable.style.display ? 'block' : 'none';
+        }
+
     </script>
 </body>
 </html>
